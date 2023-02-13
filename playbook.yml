@@ -1,0 +1,8 @@
+---
+
+# WEB SERVER
+- hosts: web
+  become: yes
+
+  roles:
+    - web
