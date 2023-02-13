@@ -66,45 +66,46 @@
 #   shell: setsebool -P httpd_can_network_connect_db 1
 #   when: ansible_facts['os_family'] == "RedHat"
 
-  - name: Install APACHE latest
-    dnf:
-      name: httpd
-      state: latest
-    when: ansible_facts['os_family'] == "RedHat"
+- name: Install APACHE latest
+  dnf:
+    name: ['httpd', 'php']
+    state: latest
+    update_cache: yes
+  when: ansible_facts['os_family'] == "RedHat"
 
-  - name: Start APACHE
-    service:
-      name: httpd
-      state: started
+- name: Start APACHE
+  service:
+    name: httpd
+    state: started
 
-  - name: Create firewall rule for apache service
-    firewalld:
-      service: http
-      zone: public
-      permanent: true
-      state: enabled
+- name: Create firewall rule for apache service
+  firewalld:
+    service: http
+    zone: public
+    permanent: true
+    state: enabled
 
-  - name: Restart apache service
-    service:
-      name: "{{ item }}"
-      state: restarted
-    loop:
-      - httpd
-      - firewalld
+- name: Restart apache service
+  service:
+    name: "{{ item }}"
+    state: restarted
+  loop:
+    - httpd
+    - firewalld
 
-  - name: Give writable mode to http folder
-    file:
-      path: /var/www/html
-      state: directory
-      mode: '0755'
+- name: Give writable mode to http folder
+  file:
+    path: /var/www/html
+    state: directory
+    mode: '0755'
 
-  - name: remove default index.html
-    file:
-      path: /var/www/html/index.html
-      state: absent
+- name: remove default index.html
+  file:
+    path: /var/www/html/index.html
+    state: absent
 
-  - name: upload web app source
-    copy:
-      src: app/
-      dest: /var/www/html/
+- name: upload web app source
+  copy:
+    src: app/
+    dest: /var/www/html/
   
